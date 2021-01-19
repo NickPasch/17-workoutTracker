@@ -1,3 +1,4 @@
+// module.exports = app => {
 const API = {
   async getLastWorkout() {
     let res;
@@ -10,6 +11,10 @@ const API = {
 
     return json[json.length - 1];
   },
+  // app.get("/api/workouts", (req, res) => {
+  //   console.log("hi")
+  //   res.json(req.body)
+  // })
   async addExercise(data) {
     const id = location.search.split("=")[1];
 
