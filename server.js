@@ -3,6 +3,8 @@ let express = require("express");
 let logger = require("morgan");
 let path = require("path")
 let db = require("./models")
+const workout = require('./models/exercise.js')
+
 const PORT = process.env.PORT || 3000;
 
 const app = express();
@@ -25,11 +27,12 @@ app.get('/exercise', (req, res) => {
 })
 
 app.get("/api/workouts", (req, res) => {
-    db.Workout.find({})
-    .then(dbWorkout => {
-        res.json(dbWorkout);
+    db.Workout.aggregate([{$addFields: {totalDuration: {$sum: '$exercises.duration'}}}])
+    .then(dbCreate => {
+        res.json(dbCreate)
     })
 })
+
 
 app.post("/api/workouts", (req, res) => {
     db.Workout.create({})
@@ -54,11 +57,21 @@ app.get("/stats", (req, res) => {
 })
 
 app.get("/api/workouts/range", (req, res) => {
-    db.Workout.find({})
+    db.Workout.aggregate([{$addFields: {totalDuration: {$sum: '$exercises.duration'}}}])
     .then(dbWorkout => {
         res.json(dbWorkout)
     })
 })
+
+// app.get("/api/workouts/range", (req, res) => {
+//     db.Workout.find({})
+//     .populate("exercises")
+//     .then(dbWorkout => {
+//         res.json(dbWorkout)
+//     })
+// })
+
+
 
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);
